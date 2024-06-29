@@ -1,6 +1,5 @@
-package com.shoppingList.shoppingListApi.domain.item;
+package com.shoppingList.shoppingListApi.domain.model;
 
-import com.shoppingList.shoppingListApi.domain.fruitList.purchaseList.PurchaseList;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

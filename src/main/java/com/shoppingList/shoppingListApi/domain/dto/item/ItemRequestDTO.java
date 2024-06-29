@@ -1,4 +1,4 @@
-package com.shoppingList.shoppingListApi.domain.item;
+package com.shoppingList.shoppingListApi.domain.dto.item;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -7,4 +7,5 @@ public record ItemRequestDTO(
         String name,
         @NotBlank(message = "quantity is required")
         String quantity
-) {}
+) {
+}
