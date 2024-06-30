@@ -1,11 +1,12 @@
 package com.shoppingList.shoppingListApi.domain.dto.item;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record ItemRequestDTO(
         @NotBlank(message = "name is required")
         String name,
-        @NotBlank(message = "quantity is required")
-        String quantity
+        @NotNull(message = "quantity is required")
+        Integer quantity
 ) {
 }
