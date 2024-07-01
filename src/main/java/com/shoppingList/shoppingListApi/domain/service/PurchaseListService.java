@@ -34,6 +34,12 @@ public class PurchaseListService {
         return this.mapToDTO(savedList);
     }
 
+    public List<PurchaseListDTO> findAll() {
+        return purchaseListRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
     private PurchaseListDTO mapToDTO(PurchaseList purchaseList) {
         List<ItemDTO> itemDTOs = purchaseList.getItems().stream()
                 .map(item -> new ItemDTO(item.getId(), item.getName(), item.getQuantity()))
