@@ -3,6 +3,7 @@ package com.shoppingList.shoppingListApi.domain.service;
 import com.shoppingList.shoppingListApi.domain.dto.item.ItemDTO;
 import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListDTO;
 import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListRequestDTO;
+import com.shoppingList.shoppingListApi.domain.exception.ResourceNotFoundException;
 import com.shoppingList.shoppingListApi.domain.model.Item;
 import com.shoppingList.shoppingListApi.domain.model.PurchaseList;
 import com.shoppingList.shoppingListApi.domain.repository.PurchaseListRepository;
@@ -38,6 +39,10 @@ public class PurchaseListService {
         return purchaseListRepository.findAll().stream()
                 .map(this::mapToDTO)
                 .toList();
+    }
+
+    public PurchaseListDTO findById(Long id) {
+        return purchaseListRepository.findById(id).map(this::mapToDTO).orElseThrow(ResourceNotFoundException::new);
     }
 
     private PurchaseListDTO mapToDTO(PurchaseList purchaseList) {

@@ -2,17 +2,13 @@ package com.shoppingList.shoppingListApi.domain.controller;
 
 import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListDTO;
 import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListRequestDTO;
-import com.shoppingList.shoppingListApi.domain.model.PurchaseList;
 import com.shoppingList.shoppingListApi.domain.service.PurchaseListService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +27,12 @@ public class PurchaseListController {
     @GetMapping
     public ResponseEntity<List<PurchaseListDTO>> listAll() {
         List<PurchaseListDTO> purchaseList = purchaseListService.findAll();
+        return new ResponseEntity<>(purchaseList, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PurchaseListDTO> listById(@PathVariable Long id) {
+        PurchaseListDTO purchaseList = purchaseListService.findById(id);
         return new ResponseEntity<>(purchaseList, HttpStatus.OK);
     }
 }
