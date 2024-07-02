@@ -21,7 +21,7 @@ public class PurchaseList {
 
     private String listName;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "purchaseList", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Item> items;
 }
