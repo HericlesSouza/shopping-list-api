@@ -1,6 +1,7 @@
 package com.shoppingList.shoppingListApi.domain.service;
 
 import com.shoppingList.shoppingListApi.domain.dto.item.ItemDTO;
+import com.shoppingList.shoppingListApi.domain.dto.item.ItemRequestDTO;
 import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListDTO;
 import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListRequestDTO;
 import com.shoppingList.shoppingListApi.domain.exception.ResourceNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PurchaseListService {
@@ -43,6 +45,21 @@ public class PurchaseListService {
 
     public PurchaseListDTO findById(Long id) {
         return purchaseListRepository.findById(id).map(this::mapToDTO).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    public PurchaseListDTO updateItem(Long id, String itemName, ItemRequestDTO itemRequestDTO) {
+        PurchaseList purchaseList = purchaseListRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("purchase list not found"));
+
+        Item item = purchaseList.getItems().stream()
+                .filter(itemFilter -> itemFilter.getName().equals(itemName))
+                .findFirst().orElseThrow(() -> new ResourceNotFoundException("item '" + itemName + "' not found"));
+
+        Optional.ofNullable(itemRequestDTO.name()).ifPresent(item::setName);
+        Optional.ofNullable(itemRequestDTO.quantity()).ifPresent(item::setQuantity);
+
+        purchaseListRepository.save(purchaseList);
+        return mapToDTO(purchaseList);
     }
 
     private PurchaseListDTO mapToDTO(PurchaseList purchaseList) {
