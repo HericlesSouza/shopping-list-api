@@ -7,6 +7,7 @@ import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListRequ
 import com.shoppingList.shoppingListApi.domain.exception.ResourceNotFoundException;
 import com.shoppingList.shoppingListApi.domain.model.Item;
 import com.shoppingList.shoppingListApi.domain.model.PurchaseList;
+import com.shoppingList.shoppingListApi.domain.repository.ItemRepository;
 import com.shoppingList.shoppingListApi.domain.repository.PurchaseListRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import java.util.Optional;
 public class PurchaseListService {
     @Autowired
     private PurchaseListRepository purchaseListRepository;
+    @Autowired
+    private ItemRepository itemRepository;
 
     @Transactional
     public PurchaseListDTO create(PurchaseListRequestDTO data) {
@@ -34,38 +37,49 @@ public class PurchaseListService {
         purchaseList.setItems(items);
         PurchaseList savedList = purchaseListRepository.save(purchaseList);
 
-        return this.mapToDTO(savedList);
+        return this.purchaseListToDTO(savedList);
     }
 
     public List<PurchaseListDTO> findAll() {
         return purchaseListRepository.findAll().stream()
-                .map(this::mapToDTO)
+                .map(this::purchaseListToDTO)
                 .toList();
     }
 
     public PurchaseListDTO findById(Long id) {
-        return purchaseListRepository.findById(id).map(this::mapToDTO).orElseThrow(ResourceNotFoundException::new);
+        return purchaseListRepository.findById(id).map(this::purchaseListToDTO).orElseThrow(ResourceNotFoundException::new);
     }
 
-    public PurchaseListDTO updateItem(Long id, String itemName, ItemRequestDTO itemRequestDTO) {
-        PurchaseList purchaseList = purchaseListRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("purchase list not found"));
-
-        Item item = purchaseList.getItems().stream()
-                .filter(itemFilter -> itemFilter.getName().equals(itemName))
-                .findFirst().orElseThrow(() -> new ResourceNotFoundException("item '" + itemName + "' not found"));
+    public ItemDTO updateItemByName(Long purchaseListId, String itemName, ItemRequestDTO itemRequestDTO) {
+        Item item = itemRepository.findByNameAndPurchaseListId(itemName, purchaseListId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Item '" + itemName + "' not found in the purchase list with ID: " + purchaseListId
+                ));
 
         Optional.ofNullable(itemRequestDTO.name()).ifPresent(item::setName);
         Optional.ofNullable(itemRequestDTO.quantity()).ifPresent(item::setQuantity);
 
-        purchaseListRepository.save(purchaseList);
-        return mapToDTO(purchaseList);
+        itemRepository.save(item);
+        return itemToDto(item);
     }
 
-    private PurchaseListDTO mapToDTO(PurchaseList purchaseList) {
+    public void deleteItemByName(Long purchaseListId, String itemName) {
+        Item item = itemRepository.findByNameAndPurchaseListId(itemName, purchaseListId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Item '" + itemName + "' not found in the purchase list with ID: " + purchaseListId)
+                );
+
+        itemRepository.delete(item);
+    }
+
+    private PurchaseListDTO purchaseListToDTO(PurchaseList purchaseList) {
         List<ItemDTO> itemDTOs = purchaseList.getItems().stream()
                 .map(item -> new ItemDTO(item.getId(), item.getName(), item.getQuantity()))
                 .toList();
         return new PurchaseListDTO(purchaseList.getId(), purchaseList.getListName(), itemDTOs);
+    }
+
+    private ItemDTO itemToDto(Item item) {
+        return new ItemDTO(item.getId(), item.getName(), item.getQuantity());
     }
 }

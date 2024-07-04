@@ -1,5 +1,6 @@
 package com.shoppingList.shoppingListApi.domain.controller;
 
+import com.shoppingList.shoppingListApi.domain.dto.item.ItemDTO;
 import com.shoppingList.shoppingListApi.domain.dto.item.ItemRequestDTO;
 import com.shoppingList.shoppingListApi.domain.dto.item.ItemValidationGroups;
 import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListDTO;
@@ -40,12 +41,21 @@ public class PurchaseListController {
     }
 
     @PatchMapping("/{id}/{itemName}")
-    public ResponseEntity<PurchaseListDTO> updateItem(
+    public ResponseEntity<ItemDTO> updateItemByName(
             @PathVariable Long id,
             @PathVariable String itemName,
             @Validated(ItemValidationGroups.Update.class) @RequestBody ItemRequestDTO data
     ) {
-        PurchaseListDTO purchaseList = purchaseListService.updateItem(id, itemName, data);
+        ItemDTO purchaseList = purchaseListService.updateItemByName(id, itemName, data);
         return new ResponseEntity<>(purchaseList, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}/{itemName}")
+    public ResponseEntity<Void> deleteItem(
+            @PathVariable Long id,
+            @PathVariable String itemName
+    ) {
+        purchaseListService.deleteItemByName(id, itemName);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
