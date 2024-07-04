@@ -47,7 +47,8 @@ public class PurchaseListService {
     }
 
     public PurchaseListDTO findById(Long id) {
-        return purchaseListRepository.findById(id).map(this::purchaseListToDTO).orElseThrow(ResourceNotFoundException::new);
+        return purchaseListRepository.findById(id).map(this::purchaseListToDTO)
+                .orElseThrow(ResourceNotFoundException::new);
     }
 
     public ItemDTO updateItemByName(Long purchaseListId, String itemName, ItemRequestDTO itemRequestDTO) {
@@ -70,6 +71,12 @@ public class PurchaseListService {
                 );
 
         itemRepository.delete(item);
+    }
+
+    public void deleteById(Long purchaseListId) {
+        PurchaseList purchaseList = purchaseListRepository.findById(purchaseListId)
+                .orElseThrow(ResourceNotFoundException::new);
+        purchaseListRepository.delete(purchaseList);
     }
 
     private PurchaseListDTO purchaseListToDTO(PurchaseList purchaseList) {

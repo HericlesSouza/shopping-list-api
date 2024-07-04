@@ -51,11 +51,19 @@ public class PurchaseListController {
     }
 
     @DeleteMapping("/{id}/{itemName}")
-    public ResponseEntity<Void> deleteItem(
+    public ResponseEntity<Void> deleteItemByName(
             @PathVariable Long id,
             @PathVariable String itemName
     ) {
         purchaseListService.deleteItemByName(id, itemName);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{id}")
+    public  ResponseEntity<Void> deleteById(
+            @PathVariable Long id
+    ) {
+        purchaseListService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
