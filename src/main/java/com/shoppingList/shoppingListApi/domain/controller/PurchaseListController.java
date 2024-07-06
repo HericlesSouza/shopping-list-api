@@ -3,6 +3,7 @@ package com.shoppingList.shoppingListApi.domain.controller;
 import com.shoppingList.shoppingListApi.domain.dto.item.ItemDTO;
 import com.shoppingList.shoppingListApi.domain.dto.item.ItemRequestDTO;
 import com.shoppingList.shoppingListApi.domain.dto.item.ItemValidationGroups;
+import com.shoppingList.shoppingListApi.domain.dto.pagedResponse.PagedResponseDTO;
 import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListDTO;
 import com.shoppingList.shoppingListApi.domain.dto.purchaseList.PurchaseListRequestDTO;
 import com.shoppingList.shoppingListApi.domain.service.PurchaseListService;
@@ -29,8 +30,13 @@ public class PurchaseListController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PurchaseListDTO>> listAll() {
-        List<PurchaseListDTO> purchaseList = purchaseListService.findAll();
+    public ResponseEntity<PagedResponseDTO<PurchaseListDTO>> listAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "asc") String order
+    ) {
+        PagedResponseDTO<PurchaseListDTO> purchaseList = purchaseListService.findAll(page, size, sort, order);
         return new ResponseEntity<>(purchaseList, HttpStatus.OK);
     }
 
